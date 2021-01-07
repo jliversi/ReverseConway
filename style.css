@@ -1,0 +1,19 @@
+.row {
+  display: flex;
+}
+
+.cell {
+  height: 15px;
+  width: 15px;
+  display: block;
+
+  border: 1px solid black;
+}
+
+.off {
+  background-color: white;
+}
+
+.on {
+  background-color: black;
+}
