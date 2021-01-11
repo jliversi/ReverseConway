@@ -3,8 +3,8 @@
 }
 
 .cell {
-  height: 15px;
-  width: 15px;
+  height: 50px;
+  width: 50px;
   display: block;
 
   border: 1px solid black;
