@@ -215,7 +215,7 @@ def merged_3byXs(left, right):
         result.append(new_row)
     return result
 
-ALL_9S = (
+ALL_3S = (
     (0,1,1),
     (0,1,0),
     (0,0,1),
@@ -226,13 +226,13 @@ ALL_9S = (
     (1,0,0),
 )
 
-SETS_PER_9 = dict()
-for el in ALL_9S:
-    SETS_PER_9[el] = find_all_sets(el)
+SETS_PER_3 = dict()
+for el in ALL_3S:
+    SETS_PER_3[el] = find_all_sets(el)
 
 
 def find_all_for_21_row(row):
-    one, two, three, four, five, six, seven = [SETS_PER_9[x] for x in row]
+    one, two, three, four, five, six, seven = [SETS_PER_3[x] for x in row]
     for a in one:
         for b in two:
             if can_merge_3x5s(a,b):
@@ -295,8 +295,8 @@ for a in row1_gen:
                             
 
 
-# for k in SETS_PER_9:
-#     print(k, ':', len(SETS_PER_9[k]))
+# for k in SETS_PER_3:
+#     print(k, ':', len(SETS_PER_3[k]))
 
 # print('----')
 
