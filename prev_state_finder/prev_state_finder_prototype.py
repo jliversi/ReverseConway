@@ -1,3 +1,5 @@
+import timeit
+
 with open('pattern.txt') as f:
     INPUTS = [list(map(lambda x: x == '#', line)) for line in f]
 # represent each 3x3 as a binary number btwn 0 and 511
@@ -41,11 +43,14 @@ class BinSqr:
     def calc_right_neighbors(self):
         # right neighbors are easier because the bottom bits are free
         # right lower bound
+        # bitwise AND with 63 to wipe top 3 bits, bitshift 3
+        # ABCDEFGHI -> DEFGHI000
         rlb = (self.num & 63) << 3
-        self.right_neighbors = range(rlb, rlb + 7)
+        self.right_neighbors = range(rlb, rlb + 8)
         # left neighbors are a bit tougher 
         # they are multiples of 64 greater starting at (self.num >> 3)
         # ignoring for now, probably can just build left to right
+        # update: turns out i could get away with building left to right :) 
 
     def calc_on_and_off_neighbors(self):
         self.on_right_neigbors = [x for x in self.right_neighbors if x in BinSqr.ON]
@@ -81,7 +86,7 @@ def print_3x7(row_tuple):
 
 
 # takes in a tuple containing 5 Truthys's or Falsey's
-# returns a tuple of integers, each integer representing a 7 bit on-off row 
+# returns a tuple of integers, each integer representing a 7 bit on-off row (this isnt even true lol)
 def poss_1x5_patterns(row):
     results = []
     one = BinSqr.ON if row[0] else BinSqr.OFF
@@ -101,7 +106,9 @@ def poss_1x5_patterns(row):
                         results.append(convert_5x1_3x7((a,b,c,d,e)))
     return results
 
-possibilites_per_line = [poss_1x5_patterns(l) for l in INPUTS]
+print("Finding partial solutions per row...")
+# possibilites_per_line = [poss_1x5_patterns(l) for l in INPUTS]
+# timeit.timeit('possibilites_per_line = [poss_1x5_patterns(l) for l in INPUTS]', globals=locals())
 
 # takes two FiveRow objects, returns boolean indicating if they can be merged
 def can_merge(t,b):
@@ -133,28 +140,31 @@ def recurse_possibilities(current_posses, level=0):
 
 
 # Run the code, hope it works! 
-a = recurse_possibilities(possibilites_per_line[0])
+# print("Searching for full solution...")
+# a = recurse_possibilities(possibilites_per_line[0])
 
-# For debugging, see how deep recursed 
-print(DEEPEST)
-
-
-# print the result!
-print(format(a[0][0], '07b'))
-print(format(a[0][1], '07b'))
-for el in a:
-    print(format(el[2], '07b'))
+# # print the result!
+# print(format(a[0][0], '07b'))
+# print(format(a[0][1], '07b'))
+# for el in a:
+#     print(format(el[2], '07b'))
 
 
 
 
 
 
-# for testing
-def num_to_3x3(num):
-    print(num)
-    num = format(num, '09b')
-    print(num)
-    print(num[0],num[3],num[6])
-    print(num[1],num[4],num[7])
-    print(num[2],num[5],num[8])
+# # for testing
+# def num_to_3x3(num):
+#     print(num)
+#     num = format(num, '09b')
+#     print(num)
+#     print(num[0],num[3],num[6])
+#     print(num[1],num[4],num[7])
+#     print(num[2],num[5],num[8])
+
+
+if __name__ == "__main__":
+    from timeit import timeit
+    print('5 row')
+    print(timeit('poss_1x5_patterns((0,1,1,0,1))', globals=locals(), number=10))

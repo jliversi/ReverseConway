@@ -1,8 +1,8 @@
 import Game from './game.js'
 
 const { x, y } = {
-  x: 23,
-  y: 7
+  x: 7,
+  y: 23
 }
 
 const game = new Game(x,y,document.getElementById('board'));
