@@ -1,7 +1,7 @@
 import Game from './game.js'
 
 const { x, y } = {
-  x: 7,
+  x: 9,
   y: 23
 }
 
