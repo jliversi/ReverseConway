@@ -10,17 +10,17 @@ const DIRS = [
 ]
 
 class Game {
-  constructor(x,y,ele) {
+  constructor(x,y,ele,inputArr) {
     this.DIM_X = x;
     this.DIM_Y = y;
     this.board = Array.from({ length: y }, () => Array.from({ length: x }, () => false));
     this.ele = ele;
 
-    this.buildBoard();
+    this.buildBoard(inputArr);
     this.setupListeners();
   }
 
-  buildBoard() {
+  buildBoard(inputArr) {
     const table = this.ele;
     this.eleArr = [];
     for (let i = 0; i < this.DIM_Y; i++) {
@@ -31,7 +31,15 @@ class Game {
       for (let j = 0; j < this.DIM_X; j++) {
         const cell = document.createElement('td');
         cell.id = `${j},${i}`;
-        cell.classList.add('cell', 'off')
+        if (inputArr && inputArr[i][j]) {
+          this.board[i][j] = true
+          cell.classList.add('cell', 'on')
+        } else {
+          cell.classList.add('cell', 'off')
+        }
+        if (i == 0 || j == 0 || i == (this.DIM_Y - 1) || j == (this.DIM_X - 1)) {
+          cell.classList.add('edge')
+        }
         row.appendChild(cell);
         eleRow.push(cell);
       }
@@ -167,3 +175,4 @@ class Game {
 
 
 export default Game;
+
