@@ -1,12 +1,12 @@
 import Game from './game.js'
-import { josh_dot_a } from './inputs_patterns.js'
+import { josh_dot_a } from './inputs_patterns.js';
 
 const { x, y } = {
-  x: 9,
-  y: 25
+  x: 50,
+  y: 7
 }
 
-const game = new Game(x,y,document.getElementById('board'),josh_dot_a);
+const game = new Game(x,y,document.getElementById('board'));
 
 document.getElementById('start').addEventListener('click', e => {
   game.run(50);

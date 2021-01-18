@@ -163,11 +163,12 @@ with open('pattern.txt') as f:
 from datetime import datetime
 
 start_time = datetime.now()
+print('Start time: ',start_time.strftime("%H:%M:%S"),'\n')
 with open('pattern.txt') as f:
     INPUTS = [line.replace('\n','') for line in f]
 
 for i, row in enumerate(INPUTS):
-    print(f'Processing {row}')
+    print(f'Processing {row} ({len(row)})')
     file_name = f'obj_files/{row}.obj'
     if os.path.isfile(file_name):
         print(f'{file_name} already exists')
@@ -175,23 +176,24 @@ for i, row in enumerate(INPUTS):
     row_list = list(map(lambda x: x == '1', row))
     row_start_time = datetime.now()
     result = [x for x in poss_row_patterns(row_list)]
-    # result = poss_row_patterns(row_list)
-    dur = (datetime.now() - row_start_time).seconds
-    print(f'Finished pt 1 after {dur} seconds')
-    # Doing some more stuff...
+    dur1 = (datetime.now() - row_start_time).seconds
+    print(f'All patterns found in {dur1} seconds')
+    # Sorting by top 2 rows
     tops_dict = dict()
     for el in result:
-        # tops
         top = el[:2]
         if top in tops_dict:
             tops_dict[top].append(el)
         else:
             tops_dict[top] = [el]
 
+    dur2 = (datetime.now() - row_start_time).seconds
+    print(f'All patterns sorted by top 2 in {dur2 - dur1} seconds')
+    print(f'Dumping {len(result)} patterns')
     with open(file_name, 'xb') as row_file:
         pickle.dump(tops_dict, row_file)
-    dur = (datetime.now() - row_start_time).seconds
-    print(f'Finished pt 2 after a total of {dur} seconds')
+    print(f'Total time for {row}: {dur2} seconds')
+    print('\n')
 
     
 
