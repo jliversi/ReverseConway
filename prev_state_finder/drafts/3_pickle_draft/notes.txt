@@ -1,0 +1,2 @@
+the obj_files produced here are of the incorrect format, now using singular int for each
+they were just wasting space, they've been deleted

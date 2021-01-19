@@ -1,15 +1,18 @@
 import Game from './game.js'
-import { josh_dot_a } from './inputs_patterns.js';
+import { josh_dot_a_2 } from './inputs_patterns.js';
+import { transpose } from './util.js';
+
+const startingPattern = transpose(josh_dot_a_2);
 
 const { x, y } = {
-  x: 50,
-  y: 7
+  x: startingPattern[0].length,
+  y: startingPattern.length
 }
 
-const game = new Game(x,y,document.getElementById('board'));
+const game = new Game(x,y,document.getElementById('board'),startingPattern);
 
 document.getElementById('start').addEventListener('click', e => {
-  game.run(50);
+  game.run(500);
 })
 
 document.getElementById('stop').addEventListener('click', e => {

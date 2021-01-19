@@ -37,7 +37,7 @@ class Game {
         } else {
           cell.classList.add('cell', 'off')
         }
-        if (i == 0 || j == 0 || i == (this.DIM_Y - 1) || j == (this.DIM_X - 1)) {
+        if (i < 2 || j < 2 || i > (this.DIM_Y - 3) || j > (this.DIM_X - 3)) {
           cell.classList.add('edge')
         }
         row.appendChild(cell);
