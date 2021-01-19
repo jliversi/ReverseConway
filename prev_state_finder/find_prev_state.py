@@ -127,19 +127,17 @@ def solve(input_grid):
     print(f'Total time, {time_since(start_time)} sec')
 
 
-
-
 # MAKE IT HAPPEN
 
 with open('i_o/input.json') as f:
     input_grid = json.load(f)
 
 
-# solve(input_grid)
+solve(input_grid)
 
 
 
-# for testing
+# Display methods, for testing
 def num_to_3x3_display(num):
     print(num)
     num = format(num, '09b')
@@ -158,5 +156,3 @@ def rows_int_to_display(num, row_len):
         rows[row_idx] += num[i]
     for el in rows:
         print(el)
-
-solve(input_grid)
