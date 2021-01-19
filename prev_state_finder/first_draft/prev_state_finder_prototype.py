@@ -155,13 +155,13 @@ def recurse_possibilities(current_posses, level=0):
 
 
 # # for testing
-# def num_to_3x3(num):
-#     print(num)
-#     num = format(num, '09b')
-#     print(num)
-#     print(num[0],num[3],num[6])
-#     print(num[1],num[4],num[7])
-#     print(num[2],num[5],num[8])
+def num_to_3x3(num):
+    print(num)
+    num = format(num, '09b')
+    print(num)
+    print(num[0],num[3],num[6])
+    print(num[1],num[4],num[7])
+    print(num[2],num[5],num[8])
 
 
 if __name__ == "__main__":
