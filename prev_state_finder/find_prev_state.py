@@ -43,11 +43,6 @@ def find_grid_pattern(row_len,poss_per_row_list, current_posses=None, depth=0):
 # The hard work done, parse the result of `find_grid_pattern` into
 # a 2D array of 1s and 0s, ready for JSONificiation
 def format_results(grid_pattern, row_length):
-    # TODO: REMOVE (FOR TESTING)
-    for el in grid_pattern:
-        rows_int_to_display(el, row_length)
-        print()
-
     first = grid_pattern[0]
     # convert first row-integer into binary string for first 2 rows
     first_2_rows = format((first >> row_length), f'0{row_length * 2}b')
@@ -85,12 +80,14 @@ def solve(input_grid):
                 fetched[row_name] = row_posses
                 all_poss_row_patterns.append(row_posses)
 
-    now = (datetime.now() - start_time).seconds
-    print(len(all_poss_row_patterns),f'rows fetched after {now} secs')
+    finish_fetch_time = datetime.now()
+    now_secs = (finish_fetch_time - start_time).seconds
+    print(len(fetched),f'rows fetched after {now_secs} secs')
     print('Searching for full solution...')
     found_pattern = find_grid_pattern(row_length + 2, all_poss_row_patterns)
-    now = (datetime.now() - start_time).seconds
-    print(f'Solution found after {now} secs')
+    finish_find_time = datetime.now()
+    now_secs = (finish_find_time - finish_fetch_time).seconds
+    print(f'Solution found after {now_secs} secs')
     print('Formatting results...')
     formatted = format_results(found_pattern, row_length + 2)
     with open('i_o/output.json','w') as json_f:
