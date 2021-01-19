@@ -1,7 +1,7 @@
-# TODO: Refactor poss_row_patterns to not do so much partial list concatting....
+# TODO(DONE): Refactor poss_row_patterns to not do so much partial list concatting....
 # !!!!!! REFACTOR TO BECOME A GENERATOR!
 # which will likely mean refactoring `find_grid_pattern`.....
-# TODO: create seperate file for running it, importing solve, change format of output (this should be determined by how you want your JS to take it)
+# TODO(DONE): create seperate file for running it, importing solve, change format of output (this should be determined by how you want your JS to take it)
 
 
 

@@ -1,4 +1,3 @@
-# TODO: create seperate file for running it, importing solve, change format of output (this should be determined by how you want your JS to take it)
 
 import pickle
 import os.path

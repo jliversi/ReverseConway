@@ -1,7 +1,7 @@
-# TODO: Refactor poss_row_patterns to not do so much partial list concatting....
+# TODO(DONE): Refactor poss_row_patterns to not do so much partial list concatting....
 # !!!!!! REFACTOR TO BECOME A GENERATOR!
 # which will likely mean refactoring `find_grid_pattern`.....
-# TODO: create seperate file for running it, importing solve, change format of output (this should be determined by how you want your JS to take it)
+# TODO(DONE): create seperate file for running it, importing solve, change format of output (this should be determined by how you want your JS to take it)
 
 
 
@@ -100,7 +100,6 @@ def sqr_ints_to_row_ints(num_list):
 # returns a list of possible 3xNs, as returned by `sqr_ints_to_row_ints`
 # Strategy: recursively loop through possiblities, restricting search space
 # in each step to neighbors of previous step (except first which is all ONs or OFFs)
-# TODO: this is the big bottleneck, way too much list concating, refactor to gen (tests below)
 def poss_row_patterns(row, prev_cell=None):
     results = []
     if prev_cell != None:

@@ -1,5 +1,3 @@
-# TODO: create seperate file for running it, importing solve, change format of output (this should be determined by how you want your JS to take it)
-
 import json
 import pickle
 import os.path
@@ -63,9 +61,6 @@ for i in range(512):
     NBR_DICT[i] = {'ON': tuple(on_nbrs), 'OFF': tuple(off_nbrs)}
 
 
-# TODO: annotate this new version
-# TODO: in row_gen, write two helper methods to grab first x digs or the last x digs 
-# TODO: re-write format results, no need to reverse anymore
 def sqrs_to_rows(num_list):
     # first, determine the total number of bits needed
     total_bits = 3 * len(num_list) + 6
@@ -90,21 +85,25 @@ def sqrs_to_rows(num_list):
 
 # everything so far comes together here
 # takes a row pattern of ONs and OFFs (iterable of truthy/falsey)
-# returns a list of possible 3xNs, as returned by `sqr_ints_to_row_ints`
+# returns a list of possible 3xNs, as returned by `sqrs_to_rows`
 # Strategy: recursively loop through possiblities, restricting search space
 # in each step to neighbors of previous step (except first which is all ONs or OFFs)
-# TODO: annotate line by line
 def poss_row_patterns(row, cur_idx=0, prev_cells=[]):
     if cur_idx > 0:
+        # determine next set and store in `next_cells`
         on_or_off = 'ON' if row[cur_idx] else 'OFF'
         next_cells = NBR_DICT[prev_cells[-1]][on_or_off]
+
+        # base case, if on final cell, yield a each poss pattern from this chain
         if cur_idx == len(row) - 1:
             for next_cell in next_cells:
                 yield sqrs_to_rows(prev_cells + [next_cell])
+        # otherwise continue the chain
         else:
             for next_cell in next_cells:
                 yield from poss_row_patterns(row, cur_idx + 1, prev_cells + [next_cell])
     else: 
+        # if on first cell, start with all of OFF or all of ON
         next_cells = ON if row[0] else OFF
         for next_cell in next_cells:
             yield from poss_row_patterns(row, cur_idx + 1, [next_cell])
