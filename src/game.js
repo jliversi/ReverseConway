@@ -13,11 +13,13 @@ class Game {
   constructor(x,y,ele,inputArr) {
     this.DIM_X = x;
     this.DIM_Y = y;
-    this.board = Array.from({ length: y }, () => Array.from({ length: x }, () => false));
     this.ele = ele;
+    this.speed = 1000;
 
     this.buildBoard(inputArr);
     this.setupListeners();
+
+    this.changeSpeed = this.changeSpeed.bind(this)
   }
 
   buildBoard(inputArr) {
@@ -31,12 +33,7 @@ class Game {
       for (let j = 0; j < this.DIM_X; j++) {
         const cell = document.createElement('td');
         cell.id = `${j},${i}`;
-        if (inputArr && inputArr[i][j]) {
-          this.board[i][j] = true
-          cell.classList.add('cell', 'on')
-        } else {
-          cell.classList.add('cell', 'off')
-        }
+        cell.classList.add('cell');
         if (i < 2 || j < 2 || i > (this.DIM_Y - 3) || j > (this.DIM_X - 3)) {
           cell.classList.add('edge')
         }
@@ -46,6 +43,14 @@ class Game {
       table.appendChild(row);
       this.eleArr.push(eleRow);
     }
+    this.setupBoard(inputArr);
+    this.render();
+  }
+
+  setupBoard(gridPattern) {
+    this.board = gridPattern.map(row => {
+      return row.map(ele => ele ? true : false)
+    })
   }
 
   setupListeners() {
@@ -145,7 +150,7 @@ class Game {
     for (let i = 0; i < this.board.length; i++) {
       for (let j = 0; j < this.board[0].length; j++) {
         const ele = this.eleArr[i][j];
-        if (this.board[i] && this.board[i][j]) {
+        if (this.board[i][j]) {
           ele.classList.add('on');
           ele.classList.remove('off');
         } else {
@@ -156,7 +161,7 @@ class Game {
     }
   }
 
-  run(interval) {
+  run() {
     if (this.running) {
       return;
     }
@@ -164,12 +169,95 @@ class Game {
     this.intId = setInterval(() => {
       this.runRound();
       this.render();
-    }, interval);
+    }, this.speed);
+  }
+
+  
+
+
+
+  changeSpeed(newSpeed) {
+    this.speed = newSpeed;
+    if (this.running) {
+      this.stop();
+      this.run();
+    }
   }
 
   stop() {
     clearInterval(this.intId);
     this.running = false;
+  }
+
+  clearBoard() {
+    this.board = Array.from({ length: this.DIM_Y }, () => Array.from({ length: this.DIM_X }, () => false));
+    this.renderScrollX();
+  }
+
+  switchPatterns(pattern) {
+    this.stop();
+    this.board = Array.from({ length: this.DIM_Y }, () => Array.from({ length: this.DIM_X }, () => false));
+    this.renderScrollY()
+    setTimeout(() => {
+      this.board = pattern;
+      this.renderScrollY();
+      setTimeout(() => {
+        this.run();
+      }, 400)
+    }, 400)
+  }
+
+
+  // Fancy renders
+  fancyRun() {
+    if (this.running) {
+      return;
+    }
+    this.running = true;
+    this.intId = setInterval(() => {
+      this.runRound();
+      this.renderScrollX(20);
+      this.renderScrollY(60);
+    }, this.speed);
+  }
+  toggleAnimation() {
+    this.stop();
+    this.run = this.fancyRun === this.run ? this.basicRun : this.fancyRun;
+    this.run();
+  }
+  renderScrollY(t=20,i=0) {
+    setTimeout(() => {
+      for (let j = 0; j < this.board[0].length; j++) {
+        const ele = this.eleArr[i][j];
+        if (this.board[i][j]) {
+          ele.classList.add('on');
+          ele.classList.remove('off');
+        } else {
+          ele.classList.add('off');
+          ele.classList.remove('on');
+        }
+      }
+      if ((i + 1) < this.board.length) {
+        this.renderScrollY(t,i+1);
+      }
+    }, t)
+  }
+  renderScrollX(t=10,j=0) {
+    setTimeout(() => {
+      for (let i = 0; i < this.board.length; i++) {
+        const ele = this.eleArr[i][j];
+        if (this.board[i][j]) {
+          ele.classList.add('on');
+          ele.classList.remove('off');
+        } else {
+          ele.classList.add('off');
+          ele.classList.remove('on');
+        }
+      }
+      if ((j + 1) < this.board[0].length) {
+        this.renderScrollX(t,j+1);
+      }
+    }, t)
   }
 }
 

@@ -4,14 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="./dist/main.js" defer></script>
+  <link rel="stylesheet" href="reset.css">
   <link rel="stylesheet" href="style.css">
   <title>Conway</title>
 </head>
 <body>
-  <table id="board"></table>
-  <button id="start">START</button>
-  <button id="stop">STOP</button>
-  <button id="one-step">ONE STEP</button>
-  <button id="log-on">Log</button>
+  <main>
+    <table id="board"></table>
+    <section id='buttons'>
+      <div id='control-buttons'>
+        <button id="start">Start</button>
+        <button id="stop" disabled>Stop</button>
+        <button id="one-step">One step</button>
+        <button id='clear'>Clear</button>
+        <button id='slow' disabled>Slow</button>
+        <button id='fast'>Fast</button>
+      </div>
+      <div id='pattern-buttons'>
+        <button id="js">JS</button>
+        <button id="python">Python</button>
+        <button id="react">React</button>
+        <button id="ruby">Ruby</button>
+        <button id="sql">SQL</button>
+        <button id="rails">Rails</button>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
