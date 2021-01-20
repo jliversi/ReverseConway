@@ -40,6 +40,8 @@ document.getElementById('one-step').addEventListener('click', e => {
 
 document.getElementById('clear').addEventListener('click', e => {
   game.stop();
+  stop.disabled = true;
+  start.disabled = false;
   game.clearBoard();
 })
 
