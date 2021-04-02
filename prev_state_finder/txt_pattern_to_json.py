@@ -2,12 +2,19 @@ import json
 from sys import argv
 
 if len(argv) == 1:
-    print("No pattern filename provided")
+    print("No pattern provided")
     quit()
 
-pattern_file = f'pattern_parsing/input_patterns/{argv[1]}'
-with open(pattern_file) as f:
-    input_pattern = [line.replace('\n','') for line in f]
+abc_folder = 'pattern_parsing/input_patterns/buffer/alphabet'
+
+input_pattern = [
+    '0000000'
+]
+
+for char in argv[1]:
+    pattern_file = f'{abc_folder}/{char}.txt'
+    with open(pattern_file) as f:
+        input_pattern += [line.replace('\n','') for line in f.readlines()[1:]]
 
 arr = []
 
@@ -17,9 +24,8 @@ for l in input_pattern:
         l_arr.append(int(char))
     arr.append(l_arr)
 
-# remove extension
-output_filename = argv[1].split('/')[-1].split('.')[0]
-output_path = f'pattern_parsing/output_patterns/{output_filename}.json'
+
+output_path = f'pattern_parsing/output_patterns/{argv[1]}.json'
 open(output_path,'x')
 
 with open(output_path,'w') as json_f:

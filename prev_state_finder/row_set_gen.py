@@ -58,7 +58,7 @@ for i in range(512):
     on_nbrs, off_nbrs = [], []
     for nbr in nbr_range:
         on_nbrs.append(nbr) if next_gen_center(nbr) else off_nbrs.append(nbr)
-    NBR_DICT[i] = {'ON': tuple(on_nbrs), 'OFF': tuple(off_nbrs)}
+    NBR_DICT[i] = {1: tuple(on_nbrs), 0: tuple(off_nbrs)}
 
 
 def sqrs_to_rows(num_list):
@@ -91,13 +91,15 @@ def sqrs_to_rows(num_list):
 def poss_row_patterns(row, cur_idx=0, prev_cells=[]):
     if cur_idx > 0:
         # determine next set and store in `next_cells`
-        on_or_off = 'ON' if row[cur_idx] else 'OFF'
+        on_or_off = row[cur_idx]
         next_cells = NBR_DICT[prev_cells[-1]][on_or_off]
 
         # base case, if on final cell, yield a each poss pattern from this chain
         if cur_idx == len(row) - 1:
             for next_cell in next_cells:
-                yield sqrs_to_rows(prev_cells + [next_cell])
+                # !!! This 'if' statement is the (first) change to allow for a wrap-around board
+                if prev_cells[0] in NBR_DICT[next_cell][row[0]]:
+                    yield sqrs_to_rows(prev_cells + [next_cell])
         # otherwise continue the chain
         else:
             for next_cell in next_cells:
@@ -109,30 +111,44 @@ def poss_row_patterns(row, cur_idx=0, prev_cells=[]):
             yield from poss_row_patterns(row, cur_idx + 1, [next_cell])
 
 
-# Run it 
-with open('i_o/input.json') as f:
-    input_grid = json.load(f)
 
 
-for i, row in enumerate(input_grid):
-    row_name = ''.join([str(x) for x in row])
-    print(f'Processing {row_name}')
-    file_name = f'obj_files/{row_name}.obj'
-    if os.path.isfile(file_name):
-        print(f'File for {row_name} already exists')
-        continue
+def num_to_3x3_display(num):
+    print(num)
+    num = format(num, '09b')
+    print(num)
+    print(num[0],num[3],num[6])
+    print(num[1],num[4],num[7])
+    print(num[2],num[5],num[8])
 
-    result = [x for x in poss_row_patterns(row)]
-    # sort here by top n digts 
-    row_len = len(row) + 2
-    tops_dict = dict()
-    for num in result:
-        top = num >> row_len
-        if top in tops_dict:
-            tops_dict[top].append(num)
-        else:
-            tops_dict[top] = [num]
+def generate_row_objs(input_grid):
+    for i, row in enumerate(input_grid):
+            row_name = ''.join([str(x) for x in row])
+            print(f'Processing {row_name}')
+            file_name = f'obj_files/{row_name}.obj'
+            if os.path.isfile(file_name):
+                print(f'File for {row_name} already exists')
+                continue
 
-    print(f'Pickling {len(result)} possible patterns into {file_name}\n')
-    with open(file_name, 'xb') as row_file:
-        pickle.dump(tops_dict, row_file)
+            result = [x for x in poss_row_patterns(row)]
+            # sort here by top n digts 
+            row_len = len(row) + 2
+            tops_dict = dict()
+            for num in result:
+                top = num >> row_len
+                if top in tops_dict:
+                    tops_dict[top].append(num)
+                else:
+                    tops_dict[top] = [num]
+
+            print(f'Pickling {len(result)} possible patterns into {file_name}\n')
+            with open(file_name, 'xb') as row_file:
+                pickle.dump(tops_dict, row_file)
+
+
+# Run it
+if __name__ == "__main__":
+    with open('i_o/input.json') as f:
+        input_grid = json.load(f)
+
+    generate_row_objs(input_grid)
