@@ -5,7 +5,7 @@ if len(argv) == 1:
     print("No pattern provided")
     quit()
 
-abc_folder = 'pattern_parsing/input_patterns/buffer/alphabet'
+abc_folder = 'pattern_parsing/alphabet'
 
 input_pattern = [
     '0000000'
@@ -29,4 +29,7 @@ output_path = f'pattern_parsing/output_patterns/{argv[1]}.json'
 open(output_path,'x')
 
 with open(output_path,'w') as json_f:
+    json.dump(arr,json_f)
+
+with open('i_o/input.json','w') as json_f:
     json.dump(arr,json_f)

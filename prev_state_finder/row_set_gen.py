@@ -1,6 +1,7 @@
 import json
 import pickle
 import os.path
+from datetime import datetime
 
 # Step 1, pre-process all possible 3x3 grids, for each determine:
 # 1. Whether the center cell is ON or OFF in next gen
@@ -99,7 +100,7 @@ def poss_row_patterns(row, cur_idx=0, prev_cells=[]):
             for next_cell in next_cells:
                 # !!! This 'if' statement is the (first) change to allow for a wrap-around board
                 if prev_cells[0] in NBR_DICT[next_cell][row[0]]:
-                    yield sqrs_to_rows(prev_cells + [next_cell])
+                    yield prev_cells + [next_cell]
         # otherwise continue the chain
         else:
             for next_cell in next_cells:
@@ -111,7 +112,11 @@ def poss_row_patterns(row, cur_idx=0, prev_cells=[]):
             yield from poss_row_patterns(row, cur_idx + 1, [next_cell])
 
 
+def print_time(time):
+    return time.strftime("%H:%M:%S")
 
+def print_now():
+    return print_time(datetime.now())
 
 def num_to_3x3_display(num):
     print(num)
@@ -121,29 +126,45 @@ def num_to_3x3_display(num):
     print(num[1],num[4],num[7])
     print(num[2],num[5],num[8])
 
-def generate_row_objs(input_grid):
+def generate_row_objs(input_grid, row_dict):
     for i, row in enumerate(input_grid):
-            row_name = ''.join([str(x) for x in row])
-            print(f'Processing {row_name}')
-            file_name = f'obj_files/{row_name}.obj'
-            if os.path.isfile(file_name):
-                print(f'File for {row_name} already exists')
-                continue
+        row_obj(row, row_dict)
 
-            result = [x for x in poss_row_patterns(row)]
-            # sort here by top n digts 
-            row_len = len(row) + 2
-            tops_dict = dict()
-            for num in result:
-                top = num >> row_len
-                if top in tops_dict:
-                    tops_dict[top].append(num)
-                else:
-                    tops_dict[top] = [num]
+def row_obj(row, row_dict):
+    # first check for row in row_dict
+    row_name = ''.join([str(x) for x in row])
+    if row_name in row_dict:
+        return
+    
+    # else check for the file
+    file_name = f'obj_files/{row_name}.obj'
+    if os.path.isfile(file_name):
+        print(f'{print_now()} - Fetching {row_name}')
+        with open(file_name,'rb') as row_file:
+            row_posses = pickle.load(row_file)
+            row_dict[row_name] = row_posses
+        return
 
-            print(f'Pickling {len(result)} possible patterns into {file_name}\n')
-            with open(file_name, 'xb') as row_file:
-                pickle.dump(tops_dict, row_file)
+    # otherwise generate them and pickle them for later as well
+    print(f'{print_now()} - Processing {row_name}')
+    result = [x for x in poss_row_patterns(row)]
+
+    for i in range(len(row)):
+        if (row_name[i:] + row_name[:i]) in row_dict: continue
+        current_result = map(lambda x: sqrs_to_rows(x[i:] + x[:i]), result)
+        # sort here by top n digts 
+        row_len = len(row) + 2
+        tops_dict = dict()
+        for num in current_result:
+            top = num >> row_len
+            if top in tops_dict:
+                tops_dict[top].append(num)
+            else:
+                tops_dict[top] = [num]
+        print(f'{print_now()} - Pickling {len(result)} possible patterns into obj_files/{row_name[i:] + row_name[:i]}.obj')
+        with open(f'obj_files/{row_name[i:] + row_name[:i]}.obj', 'wb') as row_file:
+            pickle.dump(tops_dict, row_file)
+        row_dict[row_name[i:] + row_name[:i]] = tops_dict
 
 
 # Run it
@@ -151,4 +172,4 @@ if __name__ == "__main__":
     with open('i_o/input.json') as f:
         input_grid = json.load(f)
 
-    generate_row_objs(input_grid)
+    generate_row_objs(input_grid, dict())

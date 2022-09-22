@@ -9,43 +9,34 @@ from datetime import datetime
 # possibilties to `find_grid_pattern` along with the row_length of our input
 # `find_grid_pattern` will recursively search for mergable path through 
 # that list, eventually returning a new list of ints constituting the found pattern 
-def find_grid_pattern(row_len,poss_per_row_list, current_posses=None, depth=0, first_choice=None):
+def find_grid_pattern(row_len,poss_per_row_list, current_posses=None, prev_choices=[]):
     # if on first level, options aren't filtered yet, so just grab options for top row
-    if depth == 0:
+    if len(prev_choices) == 0:
         a = poss_per_row_list[0]
         current_posses = [poss for poss_key in a for poss in a[poss_key]]
 
     # if reached bottom level (!!!), let's hope possiblities include one that can wrap to our first choice
     # if so, just return first option (SCRATCH THAT)
-    if depth == len(poss_per_row_list) - 1:
-        top_of_first_choice = first_choice >> row_len
+    if len(prev_choices) == len(poss_per_row_list) - 1:
+        top_of_first_choice = prev_choices[0] >> row_len
         for el in current_posses:
             # !!! This is the (second) change to allow for a wrap-around board
             bottom_two_of_top_poss = el & (2**(row_len * 2) - 1)
             if bottom_two_of_top_poss != top_of_first_choice: continue
-            return [el]
-        return None
-
-    # iterate current options
-    for top_poss in current_posses:
-        # filter next set of possibilites:
-        # possiblities are already sorted under their top x digits, 
-        # so we only recurse with options that match our current top_poss's 
-        # bottom x digits
-        bottom_two_of_top_poss = top_poss & (2**(row_len * 2) - 1)
-        if bottom_two_of_top_poss not in poss_per_row_list[depth + 1]: continue
-        poss_next = poss_per_row_list[depth + 1][bottom_two_of_top_poss]
-        
-        # recurse with those possibilties
-        
-        subresult = find_grid_pattern(row_len,poss_per_row_list, poss_next, depth + 1, (first_choice or top_poss))
-        # if subresult is truthy, we found it! send it up!!!!
-        if subresult:
-            return [top_poss] + subresult
-        # otherwise continue to next iteration of current_posses
-
-    # if never found, return None for recursive results
-    return None
+            yield format_results(prev_choices + [el], row_len)
+    else:
+        # iterate current options
+        for top_poss in current_posses:
+            # filter next set of possibilites:
+            # possiblities are already sorted under their top x digits, 
+            # so we only recurse with options that match our current top_poss's 
+            # bottom x digits
+            bottom_two_of_top_poss = top_poss & (2**(row_len * 2) - 1)
+            if bottom_two_of_top_poss not in poss_per_row_list[len(prev_choices) + 1]: continue
+            poss_next = poss_per_row_list[len(prev_choices) + 1][bottom_two_of_top_poss]
+            
+            yield from find_grid_pattern(row_len,poss_per_row_list, poss_next, prev_choices + [top_poss])
+            # otherwise continue to next iteration of current_posses
 
 
 
@@ -78,20 +69,12 @@ def time_since(time):
     return (datetime.now() - time).seconds
 
 # returns fetched rows and number of rows fetched
-def fetch_row_possiblities(input_grid):
+def fetch_row_possiblities(input_grid, row_dict):
     all_poss_row_patterns = []
-    fetched = {}
     for row in input_grid:
         row_name = ''.join([str(x) for x in row])
-        if row_name in fetched:
-            all_poss_row_patterns.append(fetched[row_name])
-        else:
-            file_name = f'obj_files/{row_name}.obj'
-            with open(file_name,'rb') as row_file:
-                row_posses = pickle.load(row_file) 
-                fetched[row_name] = row_posses
-                all_poss_row_patterns.append(row_posses)
-    return (all_poss_row_patterns, len(fetched))
+        all_poss_row_patterns.append(row_dict[row_name])
+    return all_poss_row_patterns
 
 def print_solution(solution):
     for line in solution:
@@ -102,31 +85,10 @@ def print_solution(solution):
 
 # bring it all together, takes a 2D array (N x N) of desired pattern
 # returns 2D array (N+2 x N+2) of prev state
-def solve(input_grid):
+def solutions(input_grid, row_dict):
     row_length = len(input_grid[0])
-    start_time = datetime.now()
-    print_time(start_time)
-
-    print(f'Fetching partial solutions per row...')
-    all_poss_row_patterns, num_rows = fetch_row_possiblities(input_grid)
-
-    finish_fetch_time = datetime.now()
-    print(num_rows,f'rows fetched after {time_since(start_time)} secs')
-
-    print('Searching for full solution...')
-    found_pattern = find_grid_pattern(row_length + 2, all_poss_row_patterns)
-    print(f'Solution found after {time_since(finish_fetch_time)} secs')
-
-    print('Formatting results...')
-    formatted = format_results(found_pattern, row_length + 2)
-
-    print('\nSolution:')
-    print_solution(formatted)
-
-    end_time = datetime.now()
-    print(f'Finished at {print_time(end_time)}')
-    print(f'Total time, {time_since(start_time)} sec')
-    return formatted
+    all_poss_row_patterns = fetch_row_possiblities(input_grid, row_dict)
+    return find_grid_pattern(row_length + 2, all_poss_row_patterns)
 
 
 # MAKE IT HAPPEN
