@@ -1,3 +1,6 @@
 /obj_files/*
 !/obj_files/.keep
+/json/output/*
+!/json/output/.keep
 /__pycache__/*
+todos.md
