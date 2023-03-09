@@ -2,5 +2,5 @@
 !/obj_files/.keep
 /json/output/*
 !/json/output/.keep
-/__pycache__/*
+/prev_state_finder/__pycache__/*
 todos.md

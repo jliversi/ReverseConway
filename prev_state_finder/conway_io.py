@@ -1,9 +1,9 @@
 from json import dump, load, JSONDecodeError
 from util import print_now
 
-def save_results(results, depth):
-    print(f'{print_now()} - Storing depth-{depth} solution in json/output/{depth}.json...')
-    with open(f'json/output/{depth}.json','w+') as json_f:
+def save_results(results, depth, label):
+    print(f'{print_now()} - Storing depth-{depth} solution in json/output/{label}/{depth}.json...')
+    with open(f'json/output/{label}/{depth}.json','w+') as json_f:
         dump(results,json_f)
 
 def load_input():

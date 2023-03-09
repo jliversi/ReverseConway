@@ -65,8 +65,11 @@ def fetch_row_possiblities(input_grid, row_dict):
     return all_poss_row_patterns
 
 # bring it all together, takes a 2D array (N x N) of desired pattern
-# returns 2D array (N+2 x N+2) of prev state
+# returns 2D array (N x N) of prev state
 def find_prev_state(input_grid, row_dict):
     row_length = len(input_grid[0])
     all_poss_row_patterns = fetch_row_possiblities(input_grid, row_dict)
+
     return find_grid_pattern(row_length + 2, all_poss_row_patterns)
+
+
